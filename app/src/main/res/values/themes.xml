@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.Rive" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#0D0F14</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+</resources>
+
