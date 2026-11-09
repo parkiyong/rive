@@ -28,8 +28,8 @@ object ApiClient {
     val okHttpClient: OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(headerInterceptor)
         .addInterceptor(loggingInterceptor)
-        .connectTimeout(15, TimeUnit.SECONDS)
-        .readTimeout(20, TimeUnit.SECONDS)
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
         .build()
 
     val tmdbService: TmdbService by lazy {

@@ -98,6 +98,7 @@ fun RiveNavGraph(
                 HomeScreen(
                     movieRepository = movieRepository,
                     historyRepository = historyRepository,
+                    category = "home",
                     onMediaClick = { media ->
                         navController.navigate(Screen.Detail.createRoute(media.id, media.isTvShow))
                     },
@@ -115,6 +116,7 @@ fun RiveNavGraph(
                 HomeScreen(
                     movieRepository = movieRepository,
                     historyRepository = historyRepository,
+                    category = "movies",
                     onMediaClick = { media ->
                         navController.navigate(Screen.Detail.createRoute(media.id, isTv = false))
                     },
@@ -128,6 +130,7 @@ fun RiveNavGraph(
                 HomeScreen(
                     movieRepository = movieRepository,
                     historyRepository = historyRepository,
+                    category = "tv",
                     onMediaClick = { media ->
                         navController.navigate(Screen.Detail.createRoute(media.id, isTv = true))
                     },

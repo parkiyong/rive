@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +35,8 @@ import app.rive.data.repository.HistoryRepository
 import app.rive.data.repository.MovieRepository
 import app.rive.ui.components.HeroBanner
 import app.rive.ui.components.MediaRow
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -44,6 +45,7 @@ fun HomeScreen(
     historyRepository: HistoryRepository,
     onMediaClick: (TmdbMediaItem) -> Unit,
     onPlayClick: (TmdbMediaItem) -> Unit,
+    category: String = "home",
     modifier: Modifier = Modifier
 ) {
     var heroItem by remember { mutableStateOf<TmdbMediaItem?>(null) }
@@ -51,37 +53,82 @@ fun HomeScreen(
     var popularMovies by remember { mutableStateOf<List<TmdbMediaItem>>(emptyList()) }
     var trendingTv by remember { mutableStateOf<List<TmdbMediaItem>>(emptyList()) }
     var popularTv by remember { mutableStateOf<List<TmdbMediaItem>>(emptyList()) }
+    var topRatedMovies by remember { mutableStateOf<List<TmdbMediaItem>>(emptyList()) }
+    var topRatedTv by remember { mutableStateOf<List<TmdbMediaItem>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
-    var loadFailed by remember { mutableStateOf(false) }
 
-    val watchHistory by historyRepository.watchHistory.collectAsState(initial = emptyList())
     val scope = rememberCoroutineScope()
 
-    fun loadContent() {
-        scope.launch {
-            isLoading = true
-            loadFailed = false
-            try {
-                movieRepository.getTrendingAll().onSuccess { items ->
-                    heroItem = items.firstOrNull()
+    suspend fun loadContent() {
+        isLoading = true
+        try {
+            coroutineScope {
+                when (category) {
+                    "movies" -> {
+                        val trendingDef = async { movieRepository.getTrendingMovies() }
+                        val popularDef = async { movieRepository.getPopularMovies() }
+                        val topRatedDef = async { movieRepository.getTopRatedMovies() }
+
+                        val trendingRes = trendingDef.await()
+                        val popularRes = popularDef.await()
+                        val topRatedRes = topRatedDef.await()
+
+                        trendingRes.onSuccess { items ->
+                            trendingMovies = items
+                            heroItem = items.firstOrNull { it.backdropPath != null } ?: items.firstOrNull()
+                        }
+                        popularRes.onSuccess { popularMovies = it }
+                        topRatedRes.onSuccess { topRatedMovies = it }
+                    }
+                    "tv" -> {
+                        val trendingDef = async { movieRepository.getTrendingTv() }
+                        val popularDef = async { movieRepository.getPopularTv() }
+                        val topRatedDef = async { movieRepository.getTopRatedTv() }
+
+                        val trendingRes = trendingDef.await()
+                        val popularRes = popularDef.await()
+                        val topRatedRes = topRatedDef.await()
+
+                        trendingRes.onSuccess { items ->
+                            trendingTv = items
+                            heroItem = items.firstOrNull { it.backdropPath != null } ?: items.firstOrNull()
+                        }
+                        popularRes.onSuccess { popularTv = it }
+                        topRatedRes.onSuccess { topRatedTv = it }
+                    }
+                    else -> { // "home"
+                        val trendingAllDef = async { movieRepository.getTrendingAll() }
+                        val trendingMoviesDef = async { movieRepository.getTrendingMovies() }
+                        val popularMoviesDef = async { movieRepository.getPopularMovies() }
+                        val trendingTvDef = async { movieRepository.getTrendingTv() }
+                        val popularTvDef = async { movieRepository.getPopularTv() }
+
+                        val trendingAllRes = trendingAllDef.await()
+                        val trendingMoviesRes = trendingMoviesDef.await()
+                        val popularMoviesRes = popularMoviesDef.await()
+                        val trendingTvRes = trendingTvDef.await()
+                        val popularTvRes = popularTvDef.await()
+
+                        trendingAllRes.onSuccess { items -> heroItem = items.firstOrNull() }
+                        trendingMoviesRes.onSuccess { trendingMovies = it }
+                        popularMoviesRes.onSuccess { popularMovies = it }
+                        trendingTvRes.onSuccess { trendingTv = it }
+                        popularTvRes.onSuccess { popularTv = it }
+                    }
                 }
-                movieRepository.getTrendingMovies().onSuccess { trendingMovies = it }
-                movieRepository.getPopularMovies().onSuccess { popularMovies = it }
-                movieRepository.getTrendingTv().onSuccess { trendingTv = it }
-                movieRepository.getPopularTv().onSuccess { popularTv = it }
-            } catch (_: Exception) {
-                loadFailed = true
-            } finally {
-                isLoading = false
             }
+        } catch (_: Exception) {
+            // Handled via empty state check
+        } finally {
+            isLoading = false
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(category) {
         loadContent()
     }
 
-    if (isLoading && heroItem == null) {
+    if (isLoading) {
         Box(
             modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
@@ -91,7 +138,10 @@ fun HomeScreen(
         return
     }
 
-    if (!isLoading && heroItem == null && trendingMovies.isEmpty() && popularMovies.isEmpty()) {
+    val hasContent = heroItem != null || trendingMovies.isNotEmpty() || popularMovies.isNotEmpty() ||
+            trendingTv.isNotEmpty() || popularTv.isNotEmpty() || topRatedMovies.isNotEmpty() || topRatedTv.isNotEmpty()
+
+    if (!hasContent) {
         Box(
             modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(24.dp),
             contentAlignment = Alignment.Center
@@ -113,7 +163,7 @@ fun HomeScreen(
                     textAlign = TextAlign.Center
                 )
                 Button(
-                    onClick = { loadContent() },
+                    onClick = { scope.launch { loadContent() } },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                     shape = RoundedCornerShape(8.dp)
                 ) {
@@ -140,35 +190,23 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        // Trending Movies
-        MediaRow(
-            title = "Trending Movies",
-            items = trendingMovies,
-            onItemClick = onMediaClick
-        )
-
-        // Trending TV Shows
-        MediaRow(
-            title = "Trending TV Shows",
-            items = trendingTv,
-            onItemClick = onMediaClick
-        )
-
-        // Popular Movies
-        MediaRow(
-            title = "Popular Movies",
-            items = popularMovies,
-            onItemClick = onMediaClick
-        )
-
-        // Popular TV Shows
-        MediaRow(
-            title = "Popular TV Shows",
-            items = popularTv,
-            onItemClick = onMediaClick
-        )
+        if (category == "movies") {
+            MediaRow(title = "Trending Movies", items = trendingMovies, onItemClick = onMediaClick)
+            MediaRow(title = "Popular Movies", items = popularMovies, onItemClick = onMediaClick)
+            MediaRow(title = "Top Rated Movies", items = topRatedMovies, onItemClick = onMediaClick)
+        } else if (category == "tv") {
+            MediaRow(title = "Trending TV Shows", items = trendingTv, onItemClick = onMediaClick)
+            MediaRow(title = "Popular TV Shows", items = popularTv, onItemClick = onMediaClick)
+            MediaRow(title = "Top Rated TV Shows", items = topRatedTv, onItemClick = onMediaClick)
+        } else {
+            MediaRow(title = "Trending Movies", items = trendingMovies, onItemClick = onMediaClick)
+            MediaRow(title = "Trending TV Shows", items = trendingTv, onItemClick = onMediaClick)
+            MediaRow(title = "Popular Movies", items = popularMovies, onItemClick = onMediaClick)
+            MediaRow(title = "Popular TV Shows", items = popularTv, onItemClick = onMediaClick)
+        }
 
         Spacer(modifier = Modifier.height(30.dp))
     }
 }
+
 

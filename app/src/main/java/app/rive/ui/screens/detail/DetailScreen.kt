@@ -61,6 +61,8 @@ import app.rive.data.repository.MovieRepository
 import app.rive.ui.components.MediaRow
 import app.rive.ui.theme.StarGold
 import coil.compose.AsyncImage
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -86,13 +88,22 @@ fun DetailScreen(
 
     LaunchedEffect(tmdbId, isTv) {
         isLoading = true
-        if (isTv) {
-            movieRepository.getTvDetails(tmdbId).onSuccess { detail = it }
-            movieRepository.getTvSeasonEpisodes(tmdbId, selectedSeason).onSuccess { episodes = it }
-            movieRepository.getRecommendations(tmdbId, isTv = true).onSuccess { recommendations = it }
-        } else {
-            movieRepository.getMovieDetails(tmdbId).onSuccess { detail = it }
-            movieRepository.getRecommendations(tmdbId, isTv = false).onSuccess { recommendations = it }
+        coroutineScope {
+            if (isTv) {
+                val detailsDef = async { movieRepository.getTvDetails(tmdbId) }
+                val episodesDef = async { movieRepository.getTvSeasonEpisodes(tmdbId, selectedSeason) }
+                val recsDef = async { movieRepository.getRecommendations(tmdbId, isTv = true) }
+
+                detailsDef.await().onSuccess { detail = it }
+                episodesDef.await().onSuccess { episodes = it }
+                recsDef.await().onSuccess { recommendations = it }
+            } else {
+                val detailsDef = async { movieRepository.getMovieDetails(tmdbId) }
+                val recsDef = async { movieRepository.getRecommendations(tmdbId, isTv = false) }
+
+                detailsDef.await().onSuccess { detail = it }
+                recsDef.await().onSuccess { recommendations = it }
+            }
         }
         isLoading = false
     }
