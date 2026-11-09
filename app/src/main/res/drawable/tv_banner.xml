@@ -1,13 +1,199 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="320dp"
     android:height="180dp"
     android:viewportWidth="320"
     android:viewportHeight="180">
-  <path
-      android:pathData="M0,0h320v180h-320z"
-      android:fillColor="#0D0F14"/>
-  <path
-      android:pathData="M160,50 L200,90 L160,130 L120,90 Z"
-      android:fillColor="#6366F1"/>
-</vector>
 
+    <!-- Background: Obsidian Gradient -->
+    <path
+        android:pathData="M0,0h320v180h-320z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="320"
+                android:endY="180">
+                <item android:color="#16171C" android:offset="0.0" />
+                <item android:color="#08080A" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Ambient Golden Glow behind emblem -->
+    <path
+        android:pathData="M0,0h320v180h-320z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="90"
+                android:centerY="90"
+                android:gradientRadius="130">
+                <item android:color="#33F59E0B" android:offset="0.0" />
+                <item android:color="#0DF59E0B" android:offset="0.5" />
+                <item android:color="#0008080A" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Outer fine border highlight -->
+    <path
+        android:pathData="M8,1 L312,1 C316,1 319,4 319,8 L319,172 C319,176 316,179 312,179 L8,179 C4,179 1,176 1,172 L1,8 C1,4 4,1 8,1 Z"
+        android:strokeWidth="1"
+        android:strokeColor="#1FFFFFFF" />
+
+    <!-- Emblem Shadow Group -->
+    <group
+        android:translateY="3">
+        <!-- Stem Shadow -->
+        <path
+            android:pathData="M68.6,56.5 L72,56.5 C74.7,56.5 76.7,58.5 76.7,61.2 L76.7,116.6 C76.7,119.3 74.7,121.3 72,121.3 L68.6,121.3 C65.9,121.3 63.9,119.3 63.9,116.6 L63.9,61.2 C63.9,58.5 65.9,56.5 68.6,56.5 Z"
+            android:fillColor="#80000000" />
+        <!-- Bowl Shadow -->
+        <path
+            android:fillType="evenOdd"
+            android:pathData="M73.4,56.5 L95,56.5 C105.1,56.5 113.2,63.9 113.2,73.4 C113.2,82.8 105.1,90.3 95,90.3 L73.4,90.3 Z M76.7,67.3 L93.6,67.3 C99.7,67.3 103.1,70 103.1,73.4 C103.1,76.7 99.7,79.5 93.6,79.5 L76.7,79.5 Z"
+            android:fillColor="#80000000" />
+        <!-- Play Leg Shadow -->
+        <path
+            android:pathData="M80.1,86.2 L113.2,101.3 C115.9,102.5 115.9,105 113.2,106.2 L80.1,121.3 C77.4,122.7 74.7,121 74.7,117.9 L74.7,89.6 C74.7,86.5 77.4,84.9 80.1,86.2 Z"
+            android:fillColor="#80000000" />
+    </group>
+
+    <!-- Monogram Prism - Vertical Stem -->
+    <path
+        android:pathData="M68.6,56.5 L72,56.5 C74.7,56.5 76.7,58.5 76.7,61.2 L76.7,116.6 C76.7,119.3 74.7,121.3 72,121.3 L68.6,121.3 C65.9,121.3 63.9,119.3 63.9,116.6 L63.9,61.2 C63.9,58.5 65.9,56.5 68.6,56.5 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="63.9"
+                android:startY="56.5"
+                android:endX="76.7"
+                android:endY="121.3">
+                <item android:color="#FDE68A" android:offset="0.0" />
+                <item android:color="#F59E0B" android:offset="0.4" />
+                <item android:color="#B45309" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Monogram Prism - Upper Bowl -->
+    <path
+        android:fillType="evenOdd"
+        android:pathData="M73.4,56.5 L95,56.5 C105.1,56.5 113.2,63.9 113.2,73.4 C113.2,82.8 105.1,90.3 95,90.3 L73.4,90.3 Z M76.7,67.3 L93.6,67.3 C99.7,67.3 103.1,70 103.1,73.4 C103.1,76.7 99.7,79.5 93.6,79.5 L76.7,79.5 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="73.4"
+                android:startY="56.5"
+                android:endX="113.2"
+                android:endY="90.3">
+                <item android:color="#FEF3C7" android:offset="0.0" />
+                <item android:color="#FBBF24" android:offset="0.3" />
+                <item android:color="#D97706" android:offset="0.8" />
+                <item android:color="#92400E" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Monogram Prism - Play Triangle Leg -->
+    <path
+        android:pathData="M80.1,86.2 L113.2,101.3 C115.9,102.5 115.9,105 113.2,106.2 L80.1,121.3 C77.4,122.7 74.7,121 74.7,117.9 L74.7,89.6 C74.7,86.5 77.4,84.9 80.1,86.2 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="74.7"
+                android:startY="85"
+                android:endX="115"
+                android:endY="122">
+                <item android:color="#FBBF24" android:offset="0.0" />
+                <item android:color="#F59E0B" android:offset="0.5" />
+                <item android:color="#D97706" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Specular Facet Line -->
+    <path
+        android:pathData="M76,89 L111.2,103.8"
+        android:strokeWidth="1.6"
+        android:strokeColor="#66FFFFFF"
+        android:strokeLineCap="round" />
+
+    <!-- Typography: R I V E -->
+    <!-- R -->
+    <path
+        android:pathData="M140,65 L161,65 C168,65 173,69 173,76 C173,82 169,86 163,87 L175,107 L163,107 L152,88 L149,88 L149,107 L140,107 Z M149,79 L160,79 C163,79 165,78 165,76 C165,73 163,72 160,72 L149,72 Z"
+        android:fillColor="#F3F4F6" />
+
+    <!-- I -->
+    <path
+        android:pathData="M182,65 L191,65 L191,107 L182,107 Z"
+        android:fillColor="#F3F4F6" />
+
+    <!-- V -->
+    <path
+        android:pathData="M199,65 L209,65 L218,97 L227,65 L237,65 L224,107 L212,107 Z"
+        android:fillColor="#F3F4F6" />
+
+    <!-- E -->
+    <path
+        android:pathData="M245,65 L272,65 L272,73 L254,73 L254,82 L268,82 L268,90 L254,90 L254,99 L273,99 L273,107 L245,107 Z"
+        android:fillColor="#F3F4F6" />
+
+    <!-- Gold Subtitle Capsule -->
+    <path
+        android:pathData="M149,116 L209,116 C213.4,116 217,119.6 217,124 C217,128.4 213.4,132 209,132 L149,132 C144.6,132 141,128.4 141,124 C141,119.6 144.6,116 149,116 Z"
+        android:fillColor="#1EF59E0B"
+        android:strokeColor="#59F59E0B"
+        android:strokeWidth="1" />
+
+    <!-- Subtitle Letters: C I N E M A -->
+    <!-- C -->
+    <path
+        android:pathData="M159.5,121.5 C158.5,120.5 156.5,120.5 155,122 C154,123 154,125 155,126 C156.5,127.5 158.5,127.5 159.5,126.5"
+        android:strokeColor="#FBBF24"
+        android:strokeWidth="1.3"
+        android:strokeLineCap="round" />
+
+    <!-- I -->
+    <path
+        android:pathData="M164.5,121 L164.5,127"
+        android:strokeColor="#FBBF24"
+        android:strokeWidth="1.3"
+        android:strokeLineCap="round" />
+
+    <!-- N -->
+    <path
+        android:pathData="M169,127 L169,121 L174,127 L174,121"
+        android:strokeColor="#FBBF24"
+        android:strokeWidth="1.3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- E -->
+    <path
+        android:pathData="M182.5,121 L178.5,121 L178.5,127 L182.5,127 M178.5,124 L181.5,124"
+        android:strokeColor="#FBBF24"
+        android:strokeWidth="1.3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- M -->
+    <path
+        android:pathData="M187,127 L187,121 L190.5,124.5 L194,121 L194,127"
+        android:strokeColor="#FBBF24"
+        android:strokeWidth="1.3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+    <!-- A -->
+    <path
+        android:pathData="M198.5,127 L201.5,121 L204.5,127 M199.5,125 L203.5,125"
+        android:strokeColor="#FBBF24"
+        android:strokeWidth="1.3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+
+</vector>
